@@ -1,5 +1,5 @@
 
-## Part 3: Sampling step
+## Sampling step
 
 # -------------------------------------------------------------
 # Use the inverse of CDF of the envelop density function to sample x*.
@@ -51,13 +51,4 @@ rejection_test <- function(x_sampled,u,h)
   return(x_accept)
 }
 
-```
 
-#4 Part 3: updating step
-```{r}
-update_grid <- function(x,x_add)
-{
-  i <- sum(x_add > x)
-  x_new <- c(x[1:i],x_add,x[(i+1):length(x)])
-  return(x_new)
-}

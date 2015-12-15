@@ -1,5 +1,5 @@
 
-## Part 1: Initialization step.
+## Initialization step.
 
 
 # -------------------------------------------------------------

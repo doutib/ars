@@ -8,7 +8,7 @@ test_that("Consistency", {
   }
   n<-10000
   domain <- c(-Inf,Inf)
-  samples <- ars1(h,n,domain)
+  samples <- ars(h,n,domain)
   
   expect_that( samples, is_a("numeric") )
   expect_that( length(samples), equals(n) )

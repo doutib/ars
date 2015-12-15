@@ -19,6 +19,9 @@ test_that("N(9737.67,0.1) Unbounded domain", {
   # Plot
   hist(samples,freq=F,breaks=100)
   lines(sort(samples),dnorm(sort(samples),mean=9737.67,sd=0.1))
-  ks_test
+  
+  # Print
+  print('N(9737.67,0.1) Unbounded domain')
+  print(ks_test)
 })
 
