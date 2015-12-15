@@ -1,5 +1,5 @@
 
-## Part 4: updating step
+## Updating step
 
 update_grid <- function(x,x_add)
 {
