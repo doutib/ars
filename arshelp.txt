@@ -1,0 +1,186 @@
+Description
+search(h,domain) can search for a x0 such that h(x0) is finite and the gradient of h at x0 is attained. This is particular useful when the domain is unbounded, the mode is far away from 0 (yet unknown) and the variance is very small, i.e. the density function is very narrow. In such cases, it's even difficult to make a guess for an initial value to find x1 and xk.
+
+Usage
+search(h,domain,x_start,max_x,min_step,relax_factor)
+
+Arguments
+h: the log of the density function
+
+domain: the domain of the density function
+
+x_start: the starting x value for the search
+
+max_x: the maximum search limit for x, if the mode is shifted beyond this limit, the user should define this parameter
+
+min_step: the minimum step allowed in the adaptive-step search algorithm, if the variance is extremely small, then the used can decrease the min_Step, yet it would be slower
+
+relax_factor: the relaxation factor in the adaptive-step search algorithm
+
+############################################################################
+Description
+abscissae(h,domain) can look for suitable x1 and xk if they are not given, this can ensure the adaptive algorithm is not biased as well as avoiding numerical issues. It can then generate the initial grid, the default number of nodes is 5. Depending on the domain, different algorithms are used, but they are all adaptive. The relaxation factor and minimum step can be defined as well.
+
+Usage
+abscissae(h,domain,x1 = NULL,xk =NULL,x0=0,nmesh=5,min_step=0.001,relax_factor=5)
+
+Arguments
+h: the log of the density function
+
+domain: the domain of the density function, for bounded, unbounded and one-sided bounded function, the algorithm works differently
+
+x1: the leftmost node
+
+xk: the rightmost node
+
+x0: an initial point for searching for suitable x1 and xk. If provided by the user based on the knowledge of the density function, then it would be faster to find x1 and xk.
+
+nmesh: the number of nodes in the initial grid
+
+min_step: the minimum allowed step size in search for x1 and xk
+
+relax_factor: the relaxation factor in search for x1 and xk
+
+
+##########################################################################
+Description
+envelop(h,x,domain) can calculate the upper hull of h. The returned value is a matrix with each row storing (h'(x), h(x_i),x_i,xmin,xmax) for each node. In this way, each upper hull is uniquely defined, as well as its corresponding domain.
+
+Usage
+envelop(h,x,domain)
+
+Arguments
+
+h: the log of the density function
+
+x: the nodes(abscissae)
+
+domain: the domain
+
+#############################################################################
+Description
+squeezing(h,x) can calculate the lower hull of h. The returned value is a matrix with each row storing (slope, h(x_i),x_i) for each node. In this way, each lower hull is uniquely defined. Note that the number of squeezing lines is that of the envelop lines plus one.
+
+Usage
+squeezing(h,x)
+
+Arguments
+
+h: the log of the density function
+
+x: the nodes(abscissae)
+
+#############################################################################
+Description
+log_concavity(u,l) can check that at each node, the upper hull and lower hull would bound the h function. The slope of the envelop lines and squeezing lines are examined.
+
+Usage
+log_concavity(u,l)
+
+Arguments
+
+u: the upper hull calculated using envelop(h,x,domain)
+
+l: the lower hull calculated using squeezing(h,x)
+
+#############################################################################
+Description
+envelop_density(h,x,domain) can return a normalized density function using the upper hull. A matrix with each row (h'(x_i), h(x_i),x_i,xmin,xmax,cumulative 
+probability, normalized cumulative probability) at each node is returned. With this infomation we can sample with sk.
+
+Usage
+envelop_density(h,x,domain)
+
+Arguments
+
+h: the log of the density function
+
+x: the nodes(abscissae)
+
+domain: the domain
+
+##########################################################################
+Description
+sample_one_point(s) can sample one point from the given piece-wise exponential density using the upper hull. The Inverse-CDF method is used here. A random number is generated, then it's used with the help of the calculated inverse CDF function of the piece-wise exponential density to generate an x.
+
+
+Usage
+sample_one_point(s)
+
+Arguments
+
+s: s is a matrix with each row (h'(x), h(x_i),x_i,xmin,xmax,cumulative 
+probability, normalized cumulative probability) at each node. This can be calculated using envelop_density(h,x,domain)
+
+##########################################################################
+Description
+squeezing_test(x_sampled,l,u) can perform the squeezing test for a newly sampled x.
+
+Usage
+squeezing_test(x_sampled,l,u)
+
+Arguments
+
+x_sampled: a newly sampled x
+
+l: lower hull calculated using squeezing(h,x)
+
+u: the upper hull calculated using envelop(h,x,domain)
+
+
+##########################################################################
+Description
+rejection_test(x_sampled,u,h) can perform the rejection test for a newly sampled x if it fails the squeezing test.
+
+Usage
+rejection_test(x_sampled,u,h) 
+
+Arguments
+
+x_sampled: a newly sampled x
+
+h : the log density function
+
+u: the upper hull calculated using envelop(h,x,domain)
+
+##########################################################################
+Description
+update_grid(x,x_add) can update the grid if both h and the gradient of h is evaluated at a sampled point.
+
+Usage
+update_grid(x,x_add)
+
+Arguments
+
+x: the abscissae in the previous step
+
+x_add: an x value to be added to the abscissae
+
+##########################################################################
+Description
+ars(h,n,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,x_start=0,max_x=10000,min_step=0.01,relax_factor=10) can sample a given number of x's given the log density function.
+
+Usage
+ars(h,n,domain)
+
+Arguments
+
+h: the log of the density function
+
+n: the number of points to be sampled
+
+domain: the domain of the density function
+
+x1: the leftmost node of the abscissae, if not provided, the abscissae() will try to find one which has a suitable slope, leading to a unbiased and numerical-issues friendly sampling process
+
+xk:  the the rightmost node of the abscissae, if not provided, the abscissae() will try to find one which has a suitable slope, leading to a unbiased and numerical-issues friendly sampling process
+
+max_x: refer to search()
+
+min_Step: refer to search()
+
+relax_factor: refer to search()
+
+
+
+
