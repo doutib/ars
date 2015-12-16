@@ -1,0 +1,10 @@
+Package: ars
+Title: Adaptive Rejection Sampler, as described by Gilks et al.
+Version: 1.0
+Description: Uses adaptive rejection sampling as described by Gilks et al (1992) to sample from a density, provided by the user. 
+Depends: 
+    R (>= 3.2.3)
+License: License
+LazyData: true
+RoxygenNote: 5.0.1.9000
+Imports: pracma
