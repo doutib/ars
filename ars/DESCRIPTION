@@ -4,11 +4,11 @@ Version: 1.0
 Description: Uses adaptive rejection sampling as described by Gilks et al (1992)
     to sample from a density, provided by the user.
 Depends:
-    R (>= 3.2.1)
-Author: doutib <thibault.doutre@berkeley.edu>
-Maintainer: doutib <thibault.doutre@berkeley.edu>
+    R (>= 3.2.0)
+Author: Zhenyuan Liu, Thibault Doutre, Hao Lyu, Paul Cho
+Maintainer: Thibault Doutre <thibault.doutre@gmail.com>
 LazyData: true
 RoxygenNote: 5.0.1
 License: GPL (>=2)
-Imports:
-    pracma
+Imports: pracma
+Suggests: testthat
