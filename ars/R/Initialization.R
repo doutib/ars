@@ -72,60 +72,34 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
     tol1 <- 0.001 
     tol2<- 1000 # tol1 and tol2 give a bound for the slopes, for numerical considerations.  
     if (is.infinite(domain[1])&is.infinite(domain[2]))
-    {  
-      hprime <- grad(h,x0)
-      hvalue <- h(x0)
-      x_min <- x0
-      x_max <- x0
-      hprime_min <- hprime
-      hprime_max <- hprime
-      hvalue_max <- hvalue
-      hvalue_min <- hvalue
-      region1 <- (hprime>= tol2)
-      region2 <- (hprime> -tol2 && hprime< tol2)
-      region3 <- (hprime<= -tol2)
-      num_iter <-0
-      # Find a xk such that the slope is bounded by -tol1 and -tol2, if not found
-      # after 1000 iterations, then relax the step by dividing relax_factor, then
-      # restart looking for xk.
-      while(!xk_found)
-      {
-        while((hprime_max <=-tol2|| hprime_max >= -tol1 ||is.na(hprime_max)||is.infinite(hvalue_max))& num_iter <1000)
+    {
+        hprime <- grad(h,x0)
+        hvalue <- h(x0)
+        x_min <- x0
+        x_max <- x0
+        hprime_min <- hprime
+        hprime_max <- hprime
+        hvalue_max <- hvalue
+        hvalue_min <- hvalue
+        num_iter <-0
+        while(!is.na(hprime_max)&is.finite(hvalue_max)& num_iter <1e6)
         {
-          x_max <- x_max - step2*region3 + step2*region1 + step2*region2
-          hprime_max <- grad(h,x_max)
-          hvalue_max <- h(x_max)
+            x_max <- x_max +0.001
+            hprime_max <- grad(h,x_max)
+            hvalue_max <- h(x_max)
         }
-        if (!is.na(hprime_max) & ! is.infinite(hvalue_max)& hprime_max > -tol2 & hprime_max < -tol1)
+        num_iter <-0
+        while(!is.na(hprime_min)&is.finite(hvalue_min)& num_iter <1e6)
         {
-          xk_found <- TRUE
-        } else{
-          num_iter <-0
-          step2 <-max(step2/relax_factor,min_step)
-          x_max <-x0
+            x_min <- x_min -0.001
+            hprime_min <- grad(h,x_min)
+            hvalue_min <- h(x_min)
         }
-      }
-      # Find a x1 such that the slope is bounded by tol1 and tol2, if not found
-      # after 1000 iterations, then relax the step by dividing relax_factor, then
-      # restart looking for x1.
-      num_iter <-0
-      while(!x1_found)
-      {
-        while((hprime_min >= tol2 || hprime_min <= tol1 ||is.na(hprime_min)||is.infinite(hvalue_min))& num_iter <1000)
-        {
-          x_min <- x_min - step2*region3 + step2*region1-step2*region2
-          hprime_min <- grad(h,x_min)
-          hvalue_min <- h(x_min)
-        }
-        if (!is.na(hprime_min) & ! is.infinite(hvalue_min)& hprime_min < tol2 & hprime_min > tol1)
-        {
-          x1_found <- TRUE
-        } else{
-          num_iter <-0
-          step2 <-max(step2/relax_factor,min_step)
-          x_min <-x0
-        }
-      }
+        x_mean <- (x_min+x_max)/2
+        tmp1 <- x_min
+        tmp2<- x_max
+        x_min <- x_mean - 1/10*(tmp2-tmp1)
+        x_max <- x_mean + 1/10*(tmp2-tmp1)
     }
     # -------------------------------------------------------------
     # case2: bounded from left.
