@@ -70,7 +70,8 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
     x1_found <- FALSE
     step2<-1
     tol1 <- 0.001
-    tol2<- 1000 # tol1 and tol2 give a bound for the slopes, for numerical considerations.
+    tol2<- 1 # tol1 and tol2 give a bound for the slopes, for numerical considerations.
+    ## case 1, unbounded
     if (is.infinite(domain[1])&is.infinite(domain[2]))
     {
         hprime <- grad(h,x0)
@@ -96,12 +97,19 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
             hprime_min <- grad(h,x_min)
             hvalue_min <- h(x_min)
         }
-        tmp1 <- x_min
-        tmp2 <- x_max
-        local_step <- (tmp2-tmp1)/100
-        
-        x_min <- x_min+10*local_step
-        x_max <- x_max-10*local_step
+        local_step <- (x_max-x_min)/50
+        while(!is.na(hprime_max) & num_iter <50 & hprime_max < -1)
+        {
+            x_max <- x_max - local_step
+            hprime_max <- grad(h,x_max)
+        }
+        while(!is.na(hprime_min) & num_iter <50 & hprime_max > 1)
+        {
+            x_min <- x_min + local_step
+            hprime_min <- grad(h,x_min)
+        }
+        x_min <- x_min+local_step
+        x_max <- x_max- local_step
     }
     # -------------------------------------------------------------
     # case2: bounded from left.
