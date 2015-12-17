@@ -28,10 +28,11 @@ opts_chunk$set(fig.width = 5, fig.height = 5)
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 \title{Adaptive Rejection Sampling}
-\author{Name:Thibault Doutre SID :\\
-Name:Paul Cho SID:19642164\\
-Name:Zhenyuan Liu SID:26968476\\
-Name:Hao Lyu SID:26966632}
+\author{
+Thibault Doutre SID :26980469\\
+Paul Cho SID:19642164\\
+Zhenyuan Liu SID:26968476\\
+Hao Lyu SID:26966632}
 \maketitle
 \section{Intoduction}
 By referring to the paper: "Rejection Sampling for Gibbs Sampling", we used the adaptive rejection sampling algorithm to simulate the samples for different log concave distributions. It mainly includes four different parts. The first part is Initialization, in this part we seek to find the initial bounds: x1 and xk, then we can generate the grid. Next we compute the upper hull and lower hull using the generated grid. After that we can do the sampling part by using the density $S_k$, calculated from the upper hull, and then update our grid after sampling some specific points. We also check the log concavity of our functions after each updating step. Finally we can repeat the sampling step to get the number of samples we want. We also tried as much as we can to vectorize and implement some tricks of generating a vector of samples but it is biased or inefficient compared to generating one point each time. We tested our results in four kinds of distributions and got the good results as shown in the tests part.\\
