@@ -19,20 +19,26 @@ ars(h, n, domain, x1 = NULL, xk = NULL, x0 = 0, nmesh = 5,
 
 \item{xk}{The the rightmost node of the abscissae, if not provided, the abscissae() will try to find one which has a suitable slope, leading to a unbiased and numerical-issues friendly sampling process}
 
-\item{max_x}{See ?search}
+\item{x0}{description to be added}
 
-\item{min_step}{See ?search}
+\item{nmesh}{description to be added}
 
-\item{relax_factor}{See ?search}
+\item{x_start}{description to be added}
+
+\item{max_x}{description to be added}
+
+\item{min_step}{description to be added}
+
+\item{relax_factor}{description to be added}
+}
+\value{
+samples description to be completed
 }
 \description{
 Adaptive rejection sampler
 The main ars() function
 }
 \examples{
-h <- function (x){
-log (dnorm (x, 0, 1))
-}
-samples <- ars(h, 10000, c(-Inf, Inf))
+ars(function (x){log (dnorm (x, 0, 1))}, 10000, c(-Inf, Inf))
 }
 
