@@ -1,0 +1,15 @@
+Package: ars
+Title: Adaptive rejection sampler
+Version: 1.0
+Description: User inputs log of a density function. Returns n points using adaptive rejection sampling, as described by Gilks et al. (1992)
+Depends: R (>= 3.2.2)
+Author: Zhenyuan Liu, Thibault Doutre, Hao Lyu, Paul Cho
+Maintainer: Paul Cho <calpcho@berkeley.edu>
+License: GPL (>=2)
+LazyData: true
+RoxygenNote: 5.0.1
+Imports: pracma
+Suggests: testthat
+NeedsCompilation: no
+Packaged: 2015-12-17 11:03:55 UTC; pcho
+Built: R 3.2.2; ; 2015-12-17 11:04:00 UTC; unix

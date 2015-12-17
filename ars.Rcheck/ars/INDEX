@@ -1,0 +1,12 @@
+abscissae               Abscissae function
+ars                     Adaptive rejection sampler The main ars()
+                        function
+envelop                 Envelope function
+envelop_density         Envelope density
+log_concavity           Log concavity test
+rejection_test          Rejection test
+sample_one_point        Sampling one point
+search                  Search function
+squeezing               Squeezing function
+squeezing_test          Squeezing test
+update_grid             Updating step

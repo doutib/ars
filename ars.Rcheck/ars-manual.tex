@@ -1,0 +1,307 @@
+\nonstopmode{}
+\documentclass[a4paper]{book}
+\usepackage[times,inconsolata,hyper]{Rd}
+\usepackage{makeidx}
+\usepackage[utf8,latin1]{inputenc}
+% \usepackage{graphicx} % @USE GRAPHICX@
+\makeindex{}
+\begin{document}
+\chapter*{}
+\begin{center}
+{\textbf{\huge Package `ars'}}
+\par\bigskip{\large \today}
+\end{center}
+\begin{description}
+\raggedright{}
+\item[Title]\AsIs{Adaptive rejection sampler}
+\item[Version]\AsIs{1.0}
+\item[Description]\AsIs{User inputs log of a density function. Returns n points using adaptive rejection sampling, as described by Gilks et al. (1992)}
+\item[Depends]\AsIs{R (>= 3.2.2)}
+\item[Author]\AsIs{Zhenyuan Liu, Thibault Doutre, Hao Lyu, Paul Cho}
+\item[Maintainer]\AsIs{Paul Cho }\email{calpcho@berkeley.edu}\AsIs{}
+\item[License]\AsIs{GPL (>=2)}
+\item[LazyData]\AsIs{true}
+\item[RoxygenNote]\AsIs{5.0.1}
+\item[Imports]\AsIs{pracma}
+\item[Suggests]\AsIs{testthat}
+\item[NeedsCompilation]\AsIs{no}
+\end{description}
+\Rdcontents{\R{} topics documented:}
+\inputencoding{utf8}
+\HeaderA{abscissae}{Abscissae function}{abscissae}
+%
+\begin{Description}\relax
+Looks for suitable x1 and xk if they are not given, this can ensure the adaptive algorithm is not biased as well as avoiding numerical issues. It can then generate the initial grid, the default number of nodes is 5. Depending on the domain, different algorithms are used, but they are all adaptive. The relaxation factor and minimum step can be defined as well.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+abscissae(h,domain,x1 = NULL,xk =NULL,x0=0,nmesh=5,min_step=0.001,relax_factor=5)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{domain}] A vector of length 2 giving the domain (left bound, right bound) of the density function
+
+\item[\code{x1}] The leftmost node
+
+\item[\code{xk}] The rightmost node
+
+\item[\code{x0}] An initial point for searching for suitable x1 and xk. If provided by the user based on the knowledge of the density function, then it would be faster to find x1 and xk
+
+\item[\code{nmesh}] The number of nodes in the initial grid
+
+\item[\code{min\_step}] The minimum step allowed in the adaptive-step search algorithm, if the variance is extremely small, then the used can decrease the min\_step, yet it would be slower
+
+\item[\code{relax\_factor}] The relaxation factor in the adaptive-step search algorithm
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{ars}{Adaptive rejection sampler The main ars() function}{ars}
+%
+\begin{Description}\relax
+Adaptive rejection sampler
+The main ars() function
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+ars(h, n, domain, x1 = NULL, xk = NULL, x0 = 0, nmesh = 5,
+  x_start = 0, max_x = 10000, min_step = 0.01, relax_factor = 10)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{n}] The number of points to be sampled
+
+\item[\code{domain}] A vector of length 2 giving the domain (left bound, right bound) of the density function
+
+\item[\code{x1}] The leftmost node of the abscissae, if not provided, the abscissae() will try to find one which has a suitable slope, leading to a unbiased and numerical-issues friendly sampling process
+
+\item[\code{xk}] The the rightmost node of the abscissae, if not provided, the abscissae() will try to find one which has a suitable slope, leading to a unbiased and numerical-issues friendly sampling process
+
+\item[\code{x0}] An initial point for searching for suitable x1 and xk. If provided by the user based on the knowledge of the density function, then it would be faster to find x1 and xk. default = 0
+
+\item[\code{nmesh}] The number of nodes in the initial grid. default = 5
+
+\item[\code{x\_start}] If x1 and xk are not provided, ars will call search() to adaptively search for an appropriate starting point to pass to abscissae() as x0. default = 0
+
+\item[\code{max\_x}] The maximum search limit for x. default is set to 10000. If the mode is shifted beyond this limit, the user should define this parameter.
+
+\item[\code{min\_step}] The minimum size of steps to take while searching for appropriate x1 to xk. default = .01
+
+\item[\code{relax\_factor}] The relaxation factor in the adaptive-step search algorithm. default = 10
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Value}
+A vector with n sampled points from density of interest.
+\end{Value}
+%
+\begin{Examples}
+\begin{ExampleCode}
+samples <- ars( function(x) log( dnorm(x, 0, 1) ), 10000, c(-Inf, Inf))
+\end{ExampleCode}
+\end{Examples}
+\inputencoding{utf8}
+\HeaderA{envelop}{Envelope function}{envelop}
+%
+\begin{Description}\relax
+Calculates the upper hull of h. The returned value is a matrix with each row storing (h'(x), h(x\_i),x\_i,xmin,xmax) for each node. In this way, each upper hull is uniquely defined, as well as its corresponding domain.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+envelop(h,x,domain)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{x}] The nodes, found by abscissae()
+
+\item[\code{domain}] A vector of length 2 giving the domain (left bound, right bound) of the density function
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{envelop\_density}{Envelope density}{envelop.Rul.density}
+%
+\begin{Description}\relax
+Returns a normalized density function using the upper hull. A matrix with each row (h'(x\_i), h(x\_i),x\_i,xmin,xmax,cumulative probability, normalized cumulative probability) at each node is returned. With this infomation we can sample with sk.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+envelop_density(h,x,domain)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{x}] The nodes, found by abscissae()
+
+\item[\code{domain}] A vector of length 2 giving the domain (left bound, right bound) of the density function
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{log\_concavity}{Log concavity test}{log.Rul.concavity}
+%
+\begin{Description}\relax
+Checks that at each node, the upper hull and lower hull would bound the h function. The slope of the envelop lines and squeezing lines are examined.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+log_concavity(u,l)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{u}] the upper hull calculated using envelop(h,x,domain)
+
+\item[\code{l}] the lower hull calculated using squeezing(h,x)
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{rejection\_test}{Rejection test}{rejection.Rul.test}
+%
+\begin{Description}\relax
+Performs the rejection test for a newly sampled x if it fails the squeezing test.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+rejection_test(x_sampled,u,h)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x\_sampled}] a newly sampled x, from sample\_one\_point()
+
+\item[\code{u}] the upper hull calculated using envelop(h,x,domain)
+
+\item[\code{h}] the log density function
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{sample\_one\_point}{Sampling one point}{sample.Rul.one.Rul.point}
+%
+\begin{Description}\relax
+Can sample one point from the given piece-wise exponential density using the upper hull. The Inverse-CDF method is used here. A random number is generated, then it's used with the help of the calculated inverse CDF function of the piece-wise exponential density to generate an x.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+sample_one_point(s)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{s}] A matrix with each row (h'(x), h(x\_i),x\_i,xmin,xmax,cumulative probability, normalized cumulative probability) at each node. This can be calculated using envelop\_density(h,x,domain)
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{search}{Search function}{search}
+%
+\begin{Description}\relax
+Searches for a x0 such that h(x0) is finite and the gradient of h at x0 is attained. This is particular useful when the domain is unbounded, the mode is far away from 0 (yet unknown) and the variance is very small, i.e. the density function is very narrow. In such cases, it's even difficult to make a guess for an initial value to find x1 and xk.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+search(h,domain,x_start,max_x,min_step,relax_factor)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{domain}] A vector of length 2 giving the domain (left bound, right bound) of the density function
+
+\item[\code{x\_start}] The starting x value for the search
+
+\item[\code{max\_x}] The maximum search limit for x, if the mode is shifted beyond this limit, the user should define this parameter
+
+\item[\code{min\_step}] The minimum step allowed in the adaptive-step search algorithm, if the variance is extremely small, then the used can decrease the min\_step, yet it would be slower
+
+\item[\code{relax\_factor}] The relaxation factor in the adaptive-step search algorithm
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{squeezing}{Squeezing function}{squeezing}
+%
+\begin{Description}\relax
+Calculates the lower hull of h. The returned value is a matrix with each row storing (slope, h(x\_i),x\_i) for each node. In this way, each lower hull is uniquely defined. Note that the number of squeezing lines is that of the envelop lines plus one.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+squeezing(h,x)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{h}] The log of the density function
+
+\item[\code{x}] The nodes, found by abscissae()
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{squeezing\_test}{Squeezing test}{squeezing.Rul.test}
+%
+\begin{Description}\relax
+Performs the squeezing test for a newly sampled x
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+squeezing_test(x_sampled,l,u)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x\_sampled}] a newly sampled x, from sample\_one\_point()
+
+\item[\code{l}] the lower hull calculated using squeezing(h,x)
+
+\item[\code{u}] the upper hull calculated using envelop(h,x,domain)
+\end{ldescription}
+\end{Arguments}
+\inputencoding{utf8}
+\HeaderA{update\_grid}{Updating step}{update.Rul.grid}
+%
+\begin{Description}\relax
+Updates the grid if both h and the gradient of h is evaluated at a sampled point.\#' @usage envelop\_density(h,x,domain)
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+update_grid(x, x_add)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] The abscissae in the previous step
+
+\item[\code{x\_add}] An x value to be added to the abscissae
+\end{ldescription}
+\end{Arguments}
+\printindex{}
+\end{document}

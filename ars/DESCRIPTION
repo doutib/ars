@@ -1,14 +1,13 @@
 Package: ars
-Title: Adaptive Rejection Sampler, as described by Gilks et al.
+Title: Adaptive rejection sampler
 Version: 1.0
-Description: Uses adaptive rejection sampling as described by Gilks et al (1992)
-    to sample from a density, provided by the user.
+Description: User inputs log of a density function. Returns n points using adaptive rejection sampling, as described by Gilks et al. (1992)
 Depends:
-    R (>= 3.2.1)
-Author: doutib <thibault.doutre@berkeley.edu>
-Maintainer: doutib <thibault.doutre@berkeley.edu>
+    R (>= 3.2.2)
+Author: Zhenyuan Liu, Thibault Doutre, Hao Lyu, Paul Cho
+Maintainer: Paul Cho <calpcho@berkeley.edu>
+License: GPL (>=2)
 LazyData: true
 RoxygenNote: 5.0.1
-License: GPL (>=2)
-Imports:
-    pracma
+Imports: pracma
+Suggests: testthat
