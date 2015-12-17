@@ -96,28 +96,12 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
             hprime_min <- grad(h,x_min)
             hvalue_min <- h(x_min)
         }
-        x_min <- x_min+5*min_step
-        x_max <- x_max-5*min_step
-        x1min <- x_min
-        xkmax <- x_max
-        x1max <- x_min
-        xkmin <- x_max
-        local_step <- (x_max-x_min)/100
-
-        hprime1 <- grad(h,x1max)
-        hprime2 <- grad(h,xkmin)
-        while( hprime1 >= 0.001)
-        {
-            x1max <- x1max +local_step
-             hprime1 <- grad(h,x1max)
-        }
-        while(hprime2 <= -0.001)
-        {
-            xkmin <- xkmin -local_step
-            hprime2 <- grad(h,xkmin)
-        }
-        x_min <- (x1min+x1max)/2
-        x_max <- (xkmin+xkmax)/2
+        tmp1 <- x_min
+        tmp2 <- x_max
+        local_step <- (tmp2-tmp1)/100
+        
+        x_min <- x_min+10*local_step
+        x_max <- x_max-10*local_step
     }
     # -------------------------------------------------------------
     # case2: bounded from left.
