@@ -1,43 +1,35 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{graphicx}
-\usepackage{longtable}
-\usepackage{float}
-\usepackage{wrapfig}
-\usepackage{rotating}
-\usepackage[normalem]{ulem}
+\documentclass{llncs}
+\usepackage{listings}
+\usepackage{moreverb}
+\usepackage{inconsolata}
 \usepackage{amsmath}
-\usepackage{textcomp}
-\usepackage{marvosym}
-\usepackage{wasysym}
-\usepackage{amssymb}
-\usepackage{pgfplots}
-\usepackage{natbib}
-\usepackage[unicode=true]{hyperref}
-\usepackage{geometry}
-\geometry{tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\usepackage{stmaryrd}
+\usepackage{bbm}
+\pagestyle{plain}
+<<echo=FALSE>>=
+  options(width=60)
 
-<<setup, include=FALSE>>=
-setwd("~/src/ars")
-library(pracma)
-library(knitr) # need this for opts_chunk command
-opts_chunk$set(fig.width = 5, fig.height = 5)
+  listing <- function(x, options) {
+    paste("\\begin{lstlisting}[basicstyle=\\ttfamily,breaklines=true]\n",
+      x, "\\end{lstlisting}\n", sep = "")
+  }
+  knit_hooks$set(output=listing)
 @
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+
 \title{Adaptive Rejection Sampling}
 \author{
-Thibault Doutre SID :26980469\\
+Thibault Doutre SID:26980469\\
 Paul Cho SID:19642164\\
 Zhenyuan Liu SID:26968476\\
 Hao Lyu SID:26966632}
+\institute{UC Berkeley}
 \maketitle
 \section{Intoduction}
 By referring to the paper: "Rejection Sampling for Gibbs Sampling", we used the adaptive rejection sampling algorithm to simulate the samples for different log concave distributions. It mainly includes four different parts. The first part is Initialization, in this part we seek to find the initial bounds: x1 and xk, then we can generate the grid. Next we compute the upper hull and lower hull using the generated grid. After that we can do the sampling part by using the density $S_k$, calculated from the upper hull, and then update our grid after sampling some specific points. We also check the log concavity of our functions after each updating step. Finally we can repeat the sampling step to get the number of samples we want. We also tried as much as we can to vectorize and implement some tricks of generating a vector of samples but it is biased or inefficient compared to generating one point each time. We tested our results in four kinds of distributions and got the good results as shown in the tests part.\\
-Zhenyuan Liu focused on developing the algorithm for initialization, adaptive rejection sampling, and updating as well as documentation. Thibault Doutre focused on testing, unit testing and searching for x1 and xk in the initialization part. Hao Lyu focused on the searching for x1 and xk, checking for log concavity and explored different algorithms for sampling efficiently and accurately. Paul Cho focused on vectorizing the functions, doing the R packaging,and implementing the help manual and documentation.\\
-Github information: we worked on "gitpcho/stat243-finalPJ" for our editing and the final version is on "doutib/ars".
+Zhenyuan Liu focused on developing the algorithm for initialization, adaptive rejection sampling, and updating as well as documentation. Thibault Doutre focused on finding an automated algorithm to reach x1 and xk in the initialization part, vectorizing the functions, testing and packaging. Hao Lyu focused on checking for log concavity and explored different algorithms for sampling efficiently. Paul Cho focused on vectorizing the functions, helped doing the R packaging, and implementing the help manual and documentation.\\
+Github information: we worked on "doutib/ars".
 \section{Initialization}
 In this section our main purpose is to search for x1 and xk, which should lead to unbiased sampling and should never bring numerical issues. We set the default values for x1 and xk to be null, however, the author has the option to provide them. In this case, it would be faster to finish the sampling. The search for x1 and xk starts with a starting point x0 such that h(x0) is finite. If the domain is unbounded, it would be necessary to find a such x0, especially when the density function is shifted and the variance is small. If the domain of the distribution is bounded then we can use the bound to be our x0. The tricky part here is that when it comes to a distribution with very small variance, using constant step may either fail to find suitable x1 and xk or takes too long. So we used adaptive steps. We need to make our step smaller if it fails to find the reasonable x1,xk here.\\
 For the upper hull, lower hull and envelop density, we just followed the definitions in the paper.
@@ -48,12 +40,11 @@ In our final version, we adopted the algorithm of sampling one point at a time. 
 \section{Tests and results}
 We used normal, gamma, beta and chi squared  distribution to test our samples and we campared the sample mean and variance with the true ones. We also plotted some histograms where the true distribution can be compared with the sample distribution. Finally we used the K-S tests to check whether the samples belongs to the true distribution. Large p-values indicates that we cannot reject the assumption that the samples are from the true distribution.
 <<Rt,echo=FALSE>>=
-getwd()
-require(testthat)
-source("ars.R")
 
+require(testthat)
+library(ars)
 # Test the whole directory
-test_dir("test")
+test_package("ars","main")
 
 @
 \section{Appendix: Description of Each Auxiliary Function}
@@ -162,7 +153,6 @@ update\_grid(x,x\_add)\\
 \textbf{Arguments}\\
 x: the abscissae in the previous step\\
 x\_add: an x value to be added to the abscissae\\
-
 
 
 \end{document}
