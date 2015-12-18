@@ -1,5 +1,5 @@
 #' Search function
-#'
+#' 
 #' Searches for a x0 such that h(x0) is finite and the gradient of h at x0 is attained. This is particular useful when the domain is unbounded, the mode is far away from 0 (yet unknown) and the variance is very small, i.e. the density function is very narrow. In such cases, it's even difficult to make a guess for an initial value to find x1 and xk.
 #' @usage search(h,domain,x_start,max_x,min_step,relax_factor)
 #' @param h The log of the density function
@@ -24,7 +24,7 @@ search <- function(h,domain,x_start,max_x,min_step,relax_factor){
   {
     while(is.infinite(hvalue1) & is.infinite(hvalue2)& num_iter< max_x/step)
     {
-      x_left <- x_left - step
+      x_left <- x_left - step 
       hvalue1 <- h(x_left)
       x_right <- x_right + step
       hvalue2<- h(x_right)
@@ -45,7 +45,7 @@ search <- function(h,domain,x_start,max_x,min_step,relax_factor){
 }
 
 #' Abscissae function
-#'
+#' 
 #' Looks for suitable x1 and xk if they are not given, this can ensure the adaptive algorithm is not biased as well as avoiding numerical issues. It can then generate the initial grid, the default number of nodes is 5. Depending on the domain, different algorithms are used, but they are all adaptive. The relaxation factor and minimum step can be defined as well.
 #' @usage abscissae(h,domain,x1 = NULL,xk =NULL,x0=0,nmesh=5,min_step=0.001,relax_factor=5)
 #' @param h The log of the density function
@@ -69,9 +69,8 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
     xk_found <- FALSE
     x1_found <- FALSE
     step2<-1
-    tol1 <- 0.001
-    tol2<- 1 # tol1 and tol2 give a bound for the slopes, for numerical considerations.
-    ## case 1, unbounded
+    tol1 <- 0.001 
+    tol2<- 1000 # tol1 and tol2 give a bound for the slopes, for numerical considerations.  
     if (is.infinite(domain[1])&is.infinite(domain[2]))
     {
         hprime <- grad(h,x0)
@@ -83,33 +82,24 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
         hvalue_max <- hvalue
         hvalue_min <- hvalue
         num_iter <-0
-        ## first find the "numerical-freindly" domain
         while(!is.na(hprime_max)&is.finite(hvalue_max)& num_iter <1e6)
         {
-            x_max <- x_max + min_step
+            x_max <- x_max +0.001
             hprime_max <- grad(h,x_max)
             hvalue_max <- h(x_max)
         }
         num_iter <-0
         while(!is.na(hprime_min)&is.finite(hvalue_min)& num_iter <1e6)
         {
-            x_min <- x_min -min_step
+            x_min <- x_min -0.001
             hprime_min <- grad(h,x_min)
             hvalue_min <- h(x_min)
         }
-        local_step <- (x_max-x_min)/50
-        while(!is.na(hprime_max) & num_iter <50 & hprime_max < -1)
-        {
-            x_max <- x_max - local_step
-            hprime_max <- grad(h,x_max)
-        }
-        while(!is.na(hprime_min) & num_iter <50 & hprime_max > 1)
-        {
-            x_min <- x_min + local_step
-            hprime_min <- grad(h,x_min)
-        }
-        x_min <- x_min+local_step
-        x_max <- x_max- local_step
+        x_mean <- (x_min+x_max)/2
+        tmp1 <- x_min
+        tmp2<- x_max
+        x_min <- x_mean - 1/10*(tmp2-tmp1)
+        x_max <- x_mean + 1/10*(tmp2-tmp1)
     }
     # -------------------------------------------------------------
     # case2: bounded from left.
@@ -125,11 +115,11 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
       # Find a xk such that the slope is bounded by -tol1 and -tol2, if not found
       # after 1000 iterations, then relax the step by dividing relax_factor, then
       # restart looking for xk. In this case, xk should not be too small to avoid
-      # sampling biase, nor should it be too large to avoid numerical issues,
+      # sampling biase, nor should it be too large to avoid numerical issues, 
       # therefore the average of the minimum and the maximum possible xk is used.
-      # However, the choice of xk really depends on how flat the density is, it's
+      # However, the choice of xk really depends on how flat the density is, it's 
       # not easy to tune a algorithm for xk that works fine for all distributions.
-
+      
       while(!xk_found)
       {
         while((hprime_max <=-tol2|| hprime_max >= -tol1 ||is.na(hprime_max)||is.infinite(hvalue_max))& num_iter <1000)
@@ -148,7 +138,7 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
         }
       }
       # Save the minimum possible xk first, then search for the maximum possible one
-      x_max_min <-x_max
+      x_max_min <-x_max  
       num_iter=0
       while((!is.na(hprime_max)&is.finite(hvalue_max)&hprime_max >-tol2 & hprime_max < -tol1)& num_iter <1000)
       {
@@ -158,7 +148,7 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
         num_iter<-num_iter + 1
       }
       # Find a xk lie between the min and max possible ones
-      x_max <-(x_max+x_max_min)/2
+      x_max <-(x_max+x_max_min)/2 
       num_iter=0
       while(!x1_found)
       {
@@ -288,5 +278,5 @@ abscissae <- function(h,domain,x1 = NULL,xk = NULL,x0=0,nmesh=5,min_step=0.001,r
     }
     x <- x_min+(c(1:nmesh)-1)*(x_max-x_min)/(nmesh-1)
     return(x)
-  }
+  }  
 }
