@@ -1,2 +1,2 @@
 # ars
-Ars for Gibbs sampling
+Adaptive Regression Sampling for Gibbs sampling
